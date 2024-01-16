@@ -55,16 +55,16 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
-      - name: version auto
-        run: npx lerna publish --conventional-commits --create-release github --yes --no-private --no-git-reset
-        if: ${{ steps.extract_branch.outputs.branch_name }} == 'release'
-      - name: version manual
-        run: npx lerna publish ${{ steps.extract_branch.outputs.version }} --conventional-commits --create-release github --yes --no-private --no-git-reset
-        if: ${{ steps.extract_branch.outputs.branch_name }} != 'release'
       - name: commit
         run: |
           git add .
-          git commit -m "chore: lerna publish"
+          git commit -m "chore: include ci commit"
+      - name: publish auto
+        run: npx lerna publish --conventional-commits --create-release github --yes --no-private --no-git-reset
+        if: ${{ steps.extract_branch.outputs.branch_name }} == 'release'
+      - name: publish manual
+        run: npx lerna publish ${{ steps.extract_branch.outputs.version }} --conventional-commits --create-release github --yes --no-private --no-git-reset
+        if: ${{ steps.extract_branch.outputs.branch_name }} != 'release'
   after_release:
     name: create release pull request
     runs-on: ubuntu-latest
