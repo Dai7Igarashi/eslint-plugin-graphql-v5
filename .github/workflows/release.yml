@@ -58,12 +58,13 @@ jobs:
       - name: commit if needed
         run: |
           git diff --quiet && git diff --staged --quiet || git commit -m "auto commit"
-      - name: publish auto
-        run: npx lerna publish --conventional-commits --create-release github --yes --no-private --no-git-reset
-        if: ${{ steps.extract_branch.outputs.branch_name }} == 'release'
-      - name: publish manual
-        run: npx lerna publish ${{ steps.extract_branch.outputs.version }} --conventional-commits --create-release github --yes --no-private --no-git-reset
-        if: ${{ steps.extract_branch.outputs.branch_name }} != 'release'
+      - name: publish
+        run: |
+          if [[ "${{ steps.extract_branch.outputs.branch_name }}" =~ "^release$" ]]; then
+            npx lerna publish --conventional-commits --create-release github --yes --no-private
+          else
+            npx lerna publish ${{ steps.extract_branch.outputs.version }} --conventional-commits --create-release github --yes --no-private
+          fi
   after_release:
     name: create release pull request
     runs-on: ubuntu-latest
