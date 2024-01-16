@@ -61,6 +61,10 @@ jobs:
       - name: version manual
         run: npx lerna version ${{ steps.extract_branch.outputs.version }} --conventional-commits --create-release github --yes --no-private
         if: ${{ steps.extract_branch.outputs.branch_name }} != 'release'
+      - name: commit
+        run: |
+          git add .
+          git commit -m "chore: lerna publish"
       - name: publish
         run: npx lerna publish
   after_release:
